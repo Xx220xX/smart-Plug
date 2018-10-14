@@ -1,3 +1,4 @@
+/** version beta 1.0.0001**/
 typedef  struct {
     int dia,hora,min,seg;
     long long int realT;
@@ -21,7 +22,7 @@ typedef struct {
 void arrumaTempo(Tempo *tmp);
 void manterAte(char *ativa,Tempo *tmpInicio,Tempo *tmpAtual,long long int fim);
 void manterEntre(char *ativa, int min, int max, float atual);
-void ativarTomada(char parametro, char *ativa, DadosParametro *myparamentros, DadosSensores *myDados);
+void ativarTomada(char parametro, char *ativa, DadosParametro *myparamentros, DadosSensores *myDados, char sensorDesativado);
 
 
 
@@ -45,23 +46,26 @@ void manterEntre(char *ativa, int min, int max, float atual) {
     }
 }
 
-void ativarTomada(char parametro, char *ativa, DadosParametro *myparamentros, DadosSensores *myDados,long long int *tmpInicio) {
-    switch (parametro) {
-        case TEMPERATURA:
-            manterEntre(ativa, myparamentros->minTemp, myparamentros->maxTemp, myDados->tempCels);
-            break;
-        case HUMIDADE:
-            manterEntre(ativa, myparamentros->minHum, myparamentros->maxHum, myDados->hum);
-            break;
-        case TEMPO:
-            manterAte(ativa, &myparamentros->tempo, &myDados->horaAtual,*tmpInicio);
-            break;
-        case EVERON:
-            *ativa = 1;
-            break;
-        case EVEROFF:
-            *ativa = 0;
-            break;
+void ativarTomada(char parametro, char *ativa, DadosParametro *myparamentros, DadosSensores *myDados,long long int *tmpInicio, char sensorDesativado) {
+    if(!sensorDesativado){
+      switch (parametro) {
+          case TEMPERATURA:
+              manterEntre(ativa, myparamentros->minTemp, myparamentros->maxTemp, myDados->tempCels);
+              break;
+          case HUMIDADE:
+              manterEntre(ativa, myparamentros->minHum, myparamentros->maxHum, myDados->hum);
+              break;
+          case TEMPO:
+              manterAte(ativa, &myparamentros->tempo, &myDados->horaAtual,*tmpInicio);
+              break;
+          case EVERON:
+              *ativa = 1;
+              break;
+          case EVEROFF:
+              *ativa = 0;
+              break;
+      }
+    }else{
+      Serial.println("os sensores estao com defeito");
     }
-
 }
