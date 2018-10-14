@@ -17,7 +17,7 @@ int main() {
         loop();
     } while (1);
 }
-
+ 
 
 unsigned int tempoInicialdht = millis();
 unsigned int deltaTempoDht = 0;
