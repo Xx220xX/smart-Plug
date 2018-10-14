@@ -1,7 +1,9 @@
-//version: beta 1.0.0001 
+//version: beta 1.0.0002
+
 #include "Wire.h"
 #include "DHT.h"
 #include "Tomada.h"
+#include "Conexao.h"
 
 #define DHTTYPE DHT22
 #define nucleo0  0
@@ -10,10 +12,7 @@
 #define DHTPin     4
 #define ledWarnRed 5
 #define pinTomada 18
-//tipos de conexao
-#define NO_CONECTION 0
-#define WIFI_TYPE 1
-#define BLUETOOTH_TYPE 2
+
 
 //variaveis para Dht quem edita é o gerenciador de tomada
 DadosSensores meusSensores;
@@ -52,7 +51,7 @@ void setup() {
             "gerenciadorDaTomada", /* nome da tarefa */
             10000,      /* número de palavras a serem alocadas para uso com a pilha da tarefa */
             NULL,       /* parâmetro de entrada para a tarefa (pode ser NULL) */
-            2,          /* prioridade da tarefa (0 a N) */
+            5,          /* prioridade da tarefa (0 a N) */
             NULL,       /* referência para a tarefa (pode ser NULL) */
             nucleo0);         /* Núcleo que executará a tarefa */
 
@@ -65,7 +64,7 @@ void setup() {
             "gerenciadorConexoes", /* nome da tarefa */
             10000,      /* número de palavras a serem alocadas para uso com a pilha da tarefa */
             NULL,       /* parâmetro de entrada para a tarefa (pode ser NULL) */
-            2,          /* prioridade da tarefa (0 a N) */
+            5,          /* prioridade da tarefa (0 a N) */
             NULL,       /* referência para a tarefa (pode ser NULL) */
             nucleo1);         /* Núcleo que executará a tarefa */
 
@@ -103,7 +102,7 @@ void gerenciadorDaTomada(void *pvParameters) {
     int estadoDaTomada = tomadaAtivada;
     while (true) {
         if (pausa) {
-            delay(2000);
+            delay(10000);
             pausa = 0;
         }
         digitalWrite(ledWarnRed, bugSensores);
@@ -112,7 +111,7 @@ void gerenciadorDaTomada(void *pvParameters) {
         } else {
             bugSensores = 0;
         }
-        ativarTomada(parametroType, &tomadaAtivada, &meusParametros, &meusSensores, &tmpInicial);
+        ativarTomada(parametroType, &tomadaAtivada, &meusParametros, &meusSensores, &tmpInicial,bugSensores);
         if (estadoDaTomada != tomadaAtivada) {
             digitalWrite(pinTomada, tomadaAtivada);
             estadoDaTomada = tomadaAtivada;
@@ -126,11 +125,17 @@ void gerenciadorDaTomada(void *pvParameters) {
 
 void gerenciadorConexoes(void *pvParameters) {
     pausa = 1;
-    int typeConection=NO_CONECTION;
+    char typeConection=NO_CONECTION;
     while (true) {
+      delay(5000);
       if(typeConection==NO_CONECTION){
-        if(haveBluetooth(&typeConection))
-        else if(haveWifi(&typeConection))
+        if(haveBluetooth(&typeConection)){
+          enviarDadosBluetooth(meusSensores);
+        
+            
+         }else if(haveWifi(&typeConection)){
+          
+         }
       }
     }
 }
