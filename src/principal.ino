@@ -1,13 +1,14 @@
-//version: beta 1.0.0002
+//version: beta 1.0.0003
 
 #include "Wire.h"
 #include "DHT.h"
 #include "Tomada.h"
 #include "Conexao.h"
+#include "ConexaoBluetooth.h"
 
 #define DHTTYPE DHT22
-#define nucleo0  0
-#define nucleo1  1
+#define nucleo0  1
+#define nucleo1  0
 // pinos reservados
 #define DHTPin     4
 #define ledWarnRed 5
@@ -30,6 +31,42 @@ char bugSensores = 0;
 /*** comunicacaoes entre conexao e tomada**/
 char pausa = 0; // pausa de 2 segundos para ser mudado os parametroType
 
+
+
+
+//tipos de conexao
+#define NO_CONECTION 0
+#define WIFI_TYPE 1
+#define BLUETOOTH_TYPE 2
+String dados = "    ";
+ char str[256];
+char haveBluetooth(char *typeConection) {
+  return 1;
+}
+char haveWifi(char *typeConection) {
+  return 0;
+}
+char enviarDadosBluetooth(DadosSensores minhaLeitura) {
+  Serial.println();
+  dados = "Celsios " + String(minhaLeitura.tempCels) + "\nfahren " + String(minhaLeitura.tempFar) + "\nHumidade: " + String(minhaLeitura.hum);
+  Serial.println(dados);
+  if (envia) {
+    Serial.println("enviado");
+    int i=0;
+    for(;dados.length();i++){
+      str[i]=dados.charAt(i);
+    }
+    str[i]=0;
+    
+    enviarMensagemBT(str);
+    envia = 0;
+  }
+
+  return 1;
+}
+
+
+
 /*    funcoes   */
 int lerSensores(DadosSensores *mydhtLeitura);
 
@@ -40,6 +77,7 @@ void gerenciadorDaTomada(void *pvParameters);
 void gerenciadorConexoes(void *pvParameters);
 
 void inciarPinos();
+void BluetoothConect(void *pvParameters);
 
 void setup() {
     inciarPinos();
@@ -69,6 +107,17 @@ void setup() {
             nucleo1);         /* Núcleo que executará a tarefa */
 
     delay(500); //tempo para a tarefa iniciar
+     xTaskCreatePinnedToCore(
+            BluetoothConect,   /* função que implementa a tarefa */
+            "BluetoothConect ", /* nome da tarefa */
+            10000,      /* número de palavras a serem alocadas para uso com a pilha da tarefa */
+            NULL,       /* parâmetro de entrada para a tarefa (pode ser NULL) */
+            3,          /* prioridade da tarefa (0 a N) */
+            NULL,       /* referência para a tarefa (pode ser NULL) */
+            nucleo1);         /* Núcleo que executará a tarefa */
+
+    delay(500); //tempo para a tarefa iniciar
+
 
 }
 
@@ -81,6 +130,7 @@ int lerSensores(DadosSensores *mydhtLeitura) {
     mydhtLeitura->tempCels = dht.readTemperature();
     mydhtLeitura->tempFar = dht.readTemperature(true);
     lerTempo(mydhtLeitura);
+    delay(400);
     if (isnan(mydhtLeitura->hum) || isnan(mydhtLeitura->tempCels) || isnan(mydhtLeitura->tempFar)) {
         return false;
     }
@@ -138,4 +188,14 @@ void gerenciadorConexoes(void *pvParameters) {
          }
       }
     }
+}
+
+void BluetoothConect(void *pvParameters){
+  iniciaBluetooth();
+  delay(1000);
+  while(1){
+    Serial.println("bluetooth ligado");
+    delay(2000);
+  }
+  
 }
