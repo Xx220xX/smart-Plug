@@ -65,3 +65,4 @@ void gerenciadorConexaoBluetooth(void *p) {
 
   }
 }
+
