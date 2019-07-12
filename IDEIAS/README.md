@@ -7,3 +7,5 @@
     https://internetofhomethings.com/homethings/?p=1943
 # SQLITE ANDROID 
     https://www.androidpro.com.br/blog/armazenamento-de-dados/sqlite/
+
+![N|Solid](https://raw.githubusercontent.com/Xx220xX/smart-Plug_code/master/IDEIAS/SmartPlug.jpg)
