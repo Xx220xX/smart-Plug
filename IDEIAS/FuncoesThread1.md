@@ -1,3 +1,4 @@
+# LER SENSOR 
   - escopo :
     ```cpp
     void lerSensor( SENSORES *s , Data * read );
