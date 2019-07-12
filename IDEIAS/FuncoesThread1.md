@@ -1,6 +1,6 @@
 # LER SENSOR 
-  escopo :
-    void lerSensor(SENSORES *s,Data *read);
-  ação :
-    le os sensores devidamente e salva em read
+  - escopo :
+  --  void lerSensor(SENSORES *s,Data *read);
+  - ação :
+    -- le os sensores devidamente e salva em read
     
