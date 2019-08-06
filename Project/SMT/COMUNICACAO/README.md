@@ -2,7 +2,7 @@
 1. [Serial](#serial) 
 2. [WiFi](#wifi)
 2. [Bluetooth](#bluetooth)
--[ ] Serial
+-[x] Serial
 -[ ] WiFi
 -[ ] Bluetooth
 ## Comum
