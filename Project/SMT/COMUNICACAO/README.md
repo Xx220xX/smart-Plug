@@ -2,9 +2,7 @@
 1. [Serial](#serial) 
 2. [WiFi](#wifi)
 2. [Bluetooth](#bluetooth)
--[x] Serial
--[ ] WiFi
--[ ] Bluetooth
+
 ## Comum
 * startComunication 
  Inicia a comunicação
@@ -21,9 +19,9 @@
 <a name = "serial"></a> 
  ##  Serial
 Comunicacao serial
-
+<a name = "wifi"></a> 
 ## Wifi
 * Conexão MQTT
-
+<a name = "bluetooth"></a> 
 ## Bluetooth
 
