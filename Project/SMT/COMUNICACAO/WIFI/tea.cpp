@@ -72,8 +72,7 @@ void setup()
 //        o que está acontecendo.
 //Parâmetros: nenhum
 //Retorno: nenhum
-void initSerial()
-{
+void initSerial(){
     Serial.begin(115200);
 }
 
@@ -87,7 +86,6 @@ void initWiFi()
     Serial.print("Conectando-se na rede: ");
     Serial.println(SSID);
     Serial.println("Aguarde");
-
     reconectWiFi();
 }
 
