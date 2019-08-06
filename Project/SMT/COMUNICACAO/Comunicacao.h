@@ -30,17 +30,24 @@ void bluetooth_resume();
  * @param msg mensagem recebida
  *
  */
-GLOBAL_ void received_mensagem(int ID, char *msg);
-GLOBAL_ void send_mensagem(int ID,char *msg);
+GLOBAL_ void onReceived_mensagem(int ID, char *msg);
+GLOBAL_ void COMUNICACAO_sendMsg(int ID, char * msg);
 GLOBAL_ void COMUNICACAO_PAUSE(int ID_REQUEST);
-
+GLOBAL_ void COMUNICACAO_RESUME();
 GLOBAL_ char mensagem[500];
 
 #include "WIFI/Wifi.h"
+#include "Serial/Serial.h"
+#include "Bluetooth/Bluetooth.h"
 
 void COMUNICACAO_init(char *name_device, char *name_wifi, char *pass_wifi, char *mqtt_server, int mqtt_port) {
     SMT_WIFI_CONFIG(name_wifi, pass_wifi, mqtt_server, mqtt_port);
-//    SMT_SERIAL_INIT(115200);
+    BlUETOOTH_CONFIG(name_device);
+    SMT_SERIAL_INIT(115200);
+
+    WIFI_START();
+    SERIAL_START();
+    BLUETOOTH_START();
 }
 
 bool use_pause = false;
@@ -55,7 +62,8 @@ void COMUNICACAO_PAUSE(int ID_REQUEST){
         bluetooth_pause();
     use_pause = false;
 }
-GLOBAL_ void send_mensagem(int ID,char *msg){
+
+GLOBAL_ void COMUNICACAO_sendMsg(int ID, char *msg){
     switch (ID){
         case ID_WIFI:
             wifi_send_msg(msg);
@@ -66,6 +74,11 @@ GLOBAL_ void send_mensagem(int ID,char *msg){
         case ID_BLUETOOTH:
             Bluetooth_send_msg(msg);
     }
+}
+GLOBAL_ void COMUNICACAO_RESUME(){
+    wifi_resume();
+    serial_resume();
+    bluetooth_resume();
 }
 
 #endif //CPP_COMUNICACQAO_H

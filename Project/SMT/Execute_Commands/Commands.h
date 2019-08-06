@@ -4,14 +4,7 @@
 
 #ifndef CPP_COMMANDS_H
 #define CPP_COMMANDS_H
-#ifdef DEBUG_SMART_PLUG
-#define PRINT_DEBUG(x) Serial.print(x);
-#define PRINTLN_DEBUG(x) Serial.println(x);
-#else
-#define PRINT_DEBUG(x)
-#define PRINTLN_DEBUG(x)
-#endif
-#define
+
 // executa os comandos recebidos pela conexao atual , atua em uma tread separada quando recebe os comandos pausa tds as outras threads e ao fim ela é destruida
 // modifica o indentificador de tarefa a ser executada e começa a atuar na nova tarefa .
 
@@ -39,32 +32,34 @@
 
 */
 
-void execute(void *mensage);
+
 
 #include<DataProcess.h> //https://github.com/Xx220xX/DataProcess
 #include<Thread.h> //https://github.com/Xx220xX/ThreadEsp32
 #include "../TASK/TASK.h"
-#define COMMAND_IS(x,y)loadCommand(x,y,"")
-void execute(void *mensage) {
-    //Thread::pauseALL(); pausa todas as outras tarefas
-    if (COMMAND_IS(mensage,"setWifi")){
+
+#define COMMAND_IS(x, y)loadCommand(x,y,"")
+
+void execute(int ID, char *mensage) {
+    if (COMMAND_IS(mensage, "setWifi")) {
         char name[41];
         char pass[41];
-        loadCommand(mensage,"setWifi","s[40] s[40]",name,pass);
-        SMT_WIFI_SET(name,pass);
-    }else if (COMMAND_IS(mensage,"setTime")){
-        int d,m,a,hr,min,seg;
-        loadCommand(mensage,"setTime","d/d/d d/d/d",&d,&m,&a,&hr,&min,&seg);
-        SMT_TIME_SET(d,m,a,hr,min,seg);
-    }else if (COMMAND_IS(mensage,"getTime")){
-        SMT_ANSWER_(SMT_TIME);
-    }else if (COMMAND_IS(mensage,"getTask")){
-        SMT_ANSWER_(SMT_CURRENT_TASK);
+        loadCommand(mensage, "setWifi", "s[40] s[40]", name, pass);
+        SMT_WIFI_SET(name, pass);
+        return;
+    } else if (COMMAND_IS(mensage, "setTime")) {
+        int d, m, a, hr, min, seg;
+        loadCommand(mensage, "setTime", "d/d/d d/d/d", &d, &m, &a, &hr, &min, &seg);
+//        SMT_TIME_SET(d,m,a,hr,min,seg);
+    } else if (COMMAND_IS(mensage, "getTime")) {
+        SMT_ANSWER_(ID, SMT_TIME);
+    } else if (COMMAND_IS(mensage, "getTask")) {
+        SMT_ANSWER_(ID, SMT_CURRENT_TASK);
     }
 
-    //atuacao
-    else if (COMMAND_IS(mensage,"despertador")){
-        int hr,min,seg;
+        //atuacao
+    else if (COMMAND_IS(mensage, "despertador")) {
+        int hr, min, seg;
         int segATUANTE;
         char diasAtuantes[11];
         /**
@@ -76,17 +71,18 @@ void execute(void *mensage) {
          *  25
          *
          */
-         loadCommand(mensage,"despertador","d/d/d d s[10]",&hr,&min,&seg,&segATUANTE,diasAtuantes);
-         SMT_SET_TASK(TASK_despertador,hr,min,seg,segATUANTE,diasAtuantes);
-    }else if (COMMAND_IS(mensage,"periodo")){
-        int ihr,imin,iseg;
-        int fhr,fmin,fseg;
+        loadCommand(mensage, "despertador", "d/d/d d s[10]", &hr, &min, &seg, &segATUANTE, diasAtuantes);
+       // SMT_SET_TASK(TASK_despertador, hr, min, seg, segATUANTE, diasAtuantes);
+    } else if (COMMAND_IS(mensage, "periodo")) {
+        int ihr, imin, iseg;
+        int fhr, fmin, fseg;
         char diasAtuantes[11];
-        loadCommand(mensage,"periodo","d/d/d d/d/d s[10]",&ihr,&imin,&iseg,&fhr,&fmin,&fseg,diasAtuantes);
-        SMT_SET_TASK(TASK_periodo,ihr,imin,iseg,fhr,fmin,fseg,diasAtuantes);
-    }else {
-        SMT_ANSWER_(SMT_TALK,mensage,"command not found");
+        loadCommand(mensage, "periodo", "d/d/d d/d/d s[10]", &ihr, &imin, &iseg, &fhr, &fmin, &fseg, diasAtuantes);
+       // SMT_SET_TASK(TASK_periodo, ihr, imin, iseg, fhr, fmin, fseg, diasAtuantes);
+    } else {
+        SMT_ANSWER_(ID, SMT_TALK, mensage);
+        SMT_ANSWER_(ID,SMT_TALK,"command not found");
     }
-    //Thread::resumeAll(); despausa todas as outras tarefas
 }
+
 #endif //CPP_COMMANDS_H

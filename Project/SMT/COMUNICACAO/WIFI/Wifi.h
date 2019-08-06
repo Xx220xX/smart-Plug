@@ -42,6 +42,12 @@ WiFiClient espClient;
 PubSubClient MQTT(espClient);
 
 // Prototipos
+GLOBAL_ void WIFI_START();
+GLOBAL_ void SMT_WIFI_SET(char *name, char *pass);
+GLOBAL_ char * WIFI_getName();
+GLOBAL_ char * WIFI_getPass();
+GLOBAL_ char * WIFI_getMqttServer();
+GLOBAL_ int  WIFI_getMqttPort();
 void SMT_INIT_WIFI();
 
 void SMT_INIT_MQTT();
@@ -61,7 +67,6 @@ void WIFI_LOOP(void *p);// usado na THREAD_WIFI
  * @param name
  * @param pass
  * @param mqtt_server
- * @param mqtt_pass
  * @param mqtt_port
  */
 void SMT_WIFI_CONFIG(str name, str pass, str mqtt_server = 0, int mqtt_port = 0) {
@@ -117,7 +122,7 @@ void SMT_VerificaConexoesWiFIEMQTT(void) {
 void WIFI_LOOP(void *p) {
     SMT_INIT_WIFI();
     SMT_INIT_MQTT();
-    while (true) {
+    for(;;) {
         SMT_VerificaConexoesWiFIEMQTT();
         MQTT.loop();
         delay(100);
@@ -127,10 +132,10 @@ void WIFI_LOOP(void *p) {
 void SMT_mqtt_callback(char *topic, byte *payload, unsigned int length){
     COMUNICACAO_PAUSE(ID_WIFI);
     int i = 0;
-    for(;i<length;i++)
+    for(;i<length&&i<499;i++)
         mensagem[i]=(char)payload[i];
     mensagem[i] = 0;
-    received_mensagem(ID_WIFI,mensagem);
+    onReceived_mensagem(ID_WIFI, mensagem);
 }
 void wifi_pause(){
     WIFI_THREAD.pause();
@@ -139,5 +144,21 @@ void wifi_pause(){
 }
 void wifi_send_msg(char *msg){
     MQTT.publish(BROKER_pub, msg);
+}
+GLOBAL_ void SMT_WIFI_SET(char *name, char *pass){
+    SMT_WIFI_CONFIG(name,pass);
+    WIFI_START();
+}
+GLOBAL_ char * WIFI_getName(){
+    return this_wifi.name;
+}
+GLOBAL_ char * WIFI_getPass(){
+    return this_wifi.pass;
+}
+GLOBAL_ char * WIFI_getMqttServer(){
+    return this_wifi.mqtt_server;
+}
+GLOBAL_ int  WIFI_getMqttPort(){
+    return this_wifi.mqtt_port;
 }
 #endif //CPP_WIFI_H
