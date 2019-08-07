@@ -45,8 +45,8 @@ void COMUNICACAO_init(char *name_device, char *name_wifi, char *pass_wifi, char 
     BlUETOOTH_CONFIG(name_device);
     SMT_SERIAL_INIT(115200);
 
-    WIFI_START();
     SERIAL_START();
+    WIFI_START();
     BLUETOOTH_START();
 }
 

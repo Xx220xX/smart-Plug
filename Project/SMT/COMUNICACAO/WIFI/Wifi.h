@@ -15,6 +15,13 @@
  */
 #ifndef CPP_WIFI_H
 #define CPP_WIFI_H
+#ifdef SMT_WIFI_DEBUG
+#define PRINT(x) Serial.print(x);
+#define PRINTLN(x) Serial.println(x);
+#else
+#define PRINT(x)
+#define PRINTLN(x)
+#endif
 
 #include <WiFi.h>
 #include <PubSubClient.h>
@@ -70,6 +77,7 @@ void WIFI_LOOP(void *p);// usado na THREAD_WIFI
  * @param mqtt_port
  */
 void SMT_WIFI_CONFIG(str name, str pass, str mqtt_server = 0, int mqtt_port = 0) {
+    PRINTLN("configurando wifi")
     WIFI_THREAD.stop();
     strcpy(this_wifi.name, name);
     strcpy(this_wifi.pass, pass);
@@ -80,8 +88,9 @@ void SMT_WIFI_CONFIG(str name, str pass, str mqtt_server = 0, int mqtt_port = 0)
 }
 
 void WIFI_START() {
+    PRINTLN("iniciando THREAD Wifi")
     WIFI_THREAD = Thread(WIFI_LOOP, "WIFI THREAD");
-    WIFI_THREAD.start();
+    WIFI_THREAD.start(nullptr);
 }
 
 void SMT_INIT_WIFI() {
@@ -125,12 +134,14 @@ void WIFI_LOOP(void *p) {
     for(;;) {
         SMT_VerificaConexoesWiFIEMQTT();
         MQTT.loop();
-        delay(100);
+
+        delay(200);
     }
 }
 
 void SMT_mqtt_callback(char *topic, byte *payload, unsigned int length){
     COMUNICACAO_PAUSE(ID_WIFI);
+    PRINTLN("chegou mensagem pelo wifi:")
     int i = 0;
     for(;i<length&&i<499;i++)
         mensagem[i]=(char)payload[i];
@@ -143,9 +154,12 @@ void wifi_pause(){
     WIFI_THREAD.resume();
 }
 void wifi_send_msg(char *msg){
+    PRINT("enviando msg")
     MQTT.publish(BROKER_pub, msg);
+    PRINTLN(": sucesso!!")
 }
 GLOBAL_ void SMT_WIFI_SET(char *name, char *pass){
+    PRINTLN("solicitacao de mudanca de nome wifi")
     SMT_WIFI_CONFIG(name,pass);
     WIFI_START();
 }
@@ -161,4 +175,7 @@ GLOBAL_ char * WIFI_getMqttServer(){
 GLOBAL_ int  WIFI_getMqttPort(){
     return this_wifi.mqtt_port;
 }
+
+#undef PRINTLN
+#undef PRINT
 #endif //CPP_WIFI_H

@@ -20,12 +20,12 @@ void bluetooth_loop(void *param);
 
 void BlUETOOTH_CONFIG(char *name_device) {
     BLUETOOTH_THREAD.stop();
-    strcpy(BT__BLUETOOTH, name_device);
+    strcpy(BT__BLUETOOTH.name, name_device);
     BLUETOOTH_THREAD = Thread(bluetooth_loop, "Bluetooth thread");
 }
 
 void BLUETOOTH_START() {
-    BLUETOOTH_THREAD.start();
+    BLUETOOTH_THREAD.start(nullptr);
 }
 
 void bluetooth_loop(void *param) {
@@ -48,10 +48,14 @@ void Bluetooth_send_msg(char *msg){
     int i;
     for(i=0;msg[i];i++);
     if(SerialBT.hasClient()){
-        SerialBT.write(msg,i);
+        SerialBT.write((const unsigned char * )msg,i);
     }
 }
-void bluetooth_pause();
-void bluetooth_resume();
+void bluetooth_pause(){
+    BLUETOOTH_THREAD.pause();
+}
+void bluetooth_resume(){
+    BLUETOOTH_THREAD.resume();
+}
 
 #endif //CPP_BLUETOOTH_H

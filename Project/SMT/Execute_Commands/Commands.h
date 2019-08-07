@@ -35,26 +35,32 @@
 
 
 #include<DataProcess.h> //https://github.com/Xx220xX/DataProcess
-#include<Thread.h> //https://github.com/Xx220xX/ThreadEsp32
+#include<ThreadEsp32.h> //https://github.com/Xx220xX/ThreadEsp32
 #include "../TASK/TASK.h"
 
 #define COMMAND_IS(x, y)loadCommand(x,y,"")
 
 void execute(int ID, char *mensage) {
+    /* comandos de configuracao  */
     if (COMMAND_IS(mensage, "setWifi")) {
         char name[41];
         char pass[41];
         loadCommand(mensage, "setWifi", "s[40] s[40]", name, pass);
+        if (ID == ID_WIFI)COMUNICACAO_RESUME();
         SMT_WIFI_SET(name, pass);
         return;
     } else if (COMMAND_IS(mensage, "setTime")) {
         int d, m, a, hr, min, seg;
         loadCommand(mensage, "setTime", "d/d/d d/d/d", &d, &m, &a, &hr, &min, &seg);
 //        SMT_TIME_SET(d,m,a,hr,min,seg);
-    } else if (COMMAND_IS(mensage, "getTime")) {
-        SMT_ANSWER_(ID, SMT_TIME);
+    }
+        /* Comandos de obtencao de informacao*/
+    else if (COMMAND_IS(mensage, "getTime")) {
+        SMT_ANSWER_(ID, SMT::TIME);
     } else if (COMMAND_IS(mensage, "getTask")) {
-        SMT_ANSWER_(ID, SMT_CURRENT_TASK);
+        SMT_ANSWER_(ID, SMT::CURRENT_TASK);
+    } else if (COMMAND_IS(mensage, "getWifi")) {
+        SMT_ANSWER_(ID, SMT::WIFI);
     }
 
         //atuacao
@@ -64,24 +70,31 @@ void execute(int ID, char *mensage) {
         char diasAtuantes[11];
         /**
          * @param diasAtuais
-         *  domindo é 1 sabado 7
+         *  domingo é 1 sabado 7
          *  para segunda a sexta 123456
          *  para somente segunda 2
          *  segunda e quinta
          *  25
-         *
          */
         loadCommand(mensage, "despertador", "d/d/d d s[10]", &hr, &min, &seg, &segATUANTE, diasAtuantes);
-       // SMT_SET_TASK(TASK_despertador, hr, min, seg, segATUANTE, diasAtuantes);
+        SMT_SET_TASK(TASK::despertador, hr, min, seg, segATUANTE, diasAtuantes);
     } else if (COMMAND_IS(mensage, "periodo")) {
         int ihr, imin, iseg;
         int fhr, fmin, fseg;
         char diasAtuantes[11];
         loadCommand(mensage, "periodo", "d/d/d d/d/d s[10]", &ihr, &imin, &iseg, &fhr, &fmin, &fseg, diasAtuantes);
-       // SMT_SET_TASK(TASK_periodo, ihr, imin, iseg, fhr, fmin, fseg, diasAtuantes);
+        SMT_SET_TASK(TASK::periodo, ihr, imin, iseg, fhr, fmin, fseg, diasAtuantes);
+
+    } else if (COMMAND_IS(mensage, "everON")) {
+        SMT_SET_TASK(TASK::EVER_ON);
+    } else if (COMMAND_IS(mensage, "everOFF")) {
+        SMT_SET_TASK(TASK::EVER_OFF);
+    } else if (COMMAND_IS(mensage, "blink")) {
+        int seg;
+        loadCommand(mensage,"blink","d",&seg);
+        SMT_SET_TASK(TASK::blink,seg);
     } else {
-        SMT_ANSWER_(ID, SMT_TALK, mensage);
-        SMT_ANSWER_(ID,SMT_TALK,"command not found");
+        SMT_ANSWER_(ID, SMT::TALK, mensage, " command not found");
     }
 }
 

@@ -27,7 +27,7 @@ void serial_resume() {
 }
 
 void SERIAL_START() {
-    SERIAL_THREAD.start();
+    SERIAL_THREAD.start(nullptr);
 }
 
 void SERIAL_loop(void *param) {
@@ -46,7 +46,7 @@ void SERIAL_loop(void *param) {
 }
 
 void Serial_send_msg(char *msg) {
-    Serial.println(msg);
+    Serial.print(msg);
 }
 
 #endif //CPP_SERIAL_H
