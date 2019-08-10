@@ -1,4 +1,4 @@
-#TASK
+#PLUG
  [CLASSE SMT_DATA_TASK](#data_task_smt)
 
 

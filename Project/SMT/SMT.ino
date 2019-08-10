@@ -1,25 +1,30 @@
-
-
-//#include "SENSOR/Sensor.h"
-#define SMT_WIFI_DEBUG
+#define SMT_DEBUG_TASK
+#define SMT_DEBUG_COMANDS
+#define SMT_BLUETOOTH_DISABLE
+#include<DataProcess.h> //https://github.com/Xx220xX/DataProcess
+#include<ThreadEsp32.h> //https://github.com/Xx220xX/ThreadEsp32
+#include "time.h"
+#include "sys/time.h"
+#include "SENSOR/SMT_Sensor.h"
 #include "COMUNICACAO/Comunicacao.h"
-#include "Execute_Commands/Commands.h"
+#include "TASK/Smt_tarefas.h"
+#include "COMMANDS/Commands.h"
 
-void onReceived_mensagem(int ID, char *msg) {
-  execute(ID, msg);
-  COMUNICACAO_RESUME();
-}
 
+// para atulizar a hora chamar smt_cl_wifi.atualizarHora();
 void setup() {
-  COMUNICACAO_init("esp_32",
-                   "meuWifi",
-                   "123456789",
-                   "iot.eclipse.org",
-                   1883);
-  Thread::getCurrent().stop();
-
+   
+    SMT.addPlug(PLUG("teste",2));//por ordem de insercao
+    Comunicacao::init_ALL(115200,
+                          "esp_32",
+                          "meuWifi",
+                          "123456789",
+                          "iot.eclipse.org",
+                          1883);
+    smt_cl_wifi.atualizarHora();
+    Thread::getCurrent().stop();
 }
 
 void loop() {
-  Serial.println("eu nao faço nada");
+
 }

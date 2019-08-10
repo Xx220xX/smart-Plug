@@ -1,7 +1,7 @@
 //Programa: NodeMCU e MQTT - Controle e Monitoramento IoT
 //Autor: Pedro Bertoleti
 
-#include <WiFi.h> // Importa a Biblioteca ESP8266WiFi
+#include "SMT_Wifi.h" // Importa a Biblioteca ESP8266WiFi
 #include <PubSubClient.h> // Importa a Biblioteca PubSubClient
 
 //defines:
