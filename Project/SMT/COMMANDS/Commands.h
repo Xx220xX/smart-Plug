@@ -39,6 +39,9 @@
 #else
 #define SMT_PRINT(msg) Serial.print(msg);
 #define SMT_PRINTLN(msg) Serial.println(msg);
+
+bool loadCommand(char *msg, const char string[8], const char string1[2], int *pInt);
+
 #endif
 
 
@@ -46,15 +49,21 @@ GLOBAL_ void received_mensagem(Comunicacao *self, char *msg) {
     SMT_PRINTLN("recebi mensagem: ");
     int id = 0;
     Condicoes condicoes;
-    if (loadCommand(msg, "getTime", "d", &id)) {
-        SMT_PRINTLN("solicitou getTime")
+    if (loadCommand(msg, "get time", "d", &id)) {
+        SMT_PRINTLN("solicitou get time")
         SMT.answer(self, id, SMT_REQUEST_GET_TIME);
     } else if (loadCommand(msg, "info all", "d", &id)) {
         SMT_PRINT("solicitou info all")
         SMT.answer(self, id, SMT_REQUEST_GET_ALL);
-    } else if (loadCommand(msg, "info task", "d", &id)) {
-        SMT_PRINT("solicitou info task")
+    } else if (loadCommand(msg, "info process", "d", &id)) {
+        SMT_PRINT("solicitou info process")
         SMT.answer(self, id, SMT_REQUEST_GET_CURRENT_TASK);
+    } else if (loadCommand(msg, "get humidity", "d", &id)) {
+        SMT_PRINT("solicitou get humidity")
+        SMT.answer(self, id, SMT_REQUEST_GET_HUMIDITY);
+    } else if (loadCommand(msg, "get temperature", "d", &id)) {
+        SMT_PRINT("solicitou get temperature")
+        SMT.answer(self, id, SMT_REQUEST_GET_TEMPERATURE);
     }
 
         /** atuacao*/
@@ -64,11 +73,20 @@ GLOBAL_ void received_mensagem(Comunicacao *self, char *msg) {
         SMT.set_task(SMT_ID_TASK_EVER_OFF, id, condicoes);
     } else if (loadCommand(msg, "on", "d", &id)) {
         SMT.set_task(SMT_ID_TASK_EVER_ON, id, condicoes);
-    }else if (loadCommand(msg, "alarme", "d d:d:d s[7] d", &id,&condicoes.hora,&condicoes.minuto,&condicoes.segundo,condicoes.wek,&condicoes.periodo)) {
+    } else if (loadCommand(msg, "alarme", "d d:d:d s[7] d", &id, &condicoes.hora, &condicoes.minuto, &condicoes.segundo,
+                           condicoes.wek, &condicoes.periodo)) {
         SMT_PRINTLN("requisitou alarme")
         SMT.set_task(SMT_ID_TASK_ALARM, id, condicoes);
+    } else if (loadCommand(msg, "refrigera", "d f",&id,&condicoes.max)) {
+        SMT.set_task(SMT_ID_TASK_TEMPERATURA_MAIOR,id,condicoes);
+    }else if (loadCommand(msg, "aquece", "d f",&id,&condicoes.min)) {
+        SMT.set_task(SMT_ID_TASK_TEMPERATURA_MENOR,id,condicoes);
+    }else if (loadCommand(msg, "humidade entre ", "d f f",&id,&condicoes.min,&condicoes.max)) {
+        SMT.set_task(SMT_ID_TASK_HUMIDADE_ENTRE,id,condicoes);
     }
-    /* conversa*/
+
+
+        /* conversa*/
     else {
         SMT.answer(self, 0, SMT_REQUEST_GET_TALK, "ERROR 404: COMMAND NOT FOUND\n", msg);
     }
