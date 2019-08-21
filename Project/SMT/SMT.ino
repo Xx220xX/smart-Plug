@@ -1,8 +1,7 @@
-#define SMT_DEBUG_TASK
 #define SMT_DEBUG_COMANDS
 //#define SMT_BLUETOOTH_DISABLE
 #define SMT_WIFI_DISABLE
-
+#define SMT_DEBUG_TASK
 // dependencias
 //Adafruit_Sensor.h https://github.com/adafruit/Adafruit_Sensor
 #include<DataProcess.h> //https://github.com/Xx220xX/DataProcess

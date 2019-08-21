@@ -32,6 +32,7 @@
 #define  SMT_ID_TASK_TEMPERATURA_MENOR 4
 #define  SMT_ID_TASK_TEMPERATURA_MAIOR 5
 #define  SMT_ID_TASK_HUMIDADE_ENTRE 6
+#define  SMT_ID_ON_FOR 7
 
 class Condicoes {
 public:
@@ -82,6 +83,19 @@ public:
             c->liga(!c->ligado());
             delay(c->condicoes.millis);
         }
+    }
+
+    static void on_for(void *pTASK) {
+        PLUG *c = (PLUG *) pTASK;
+        c->liga(true);
+        Serial.println("LIGUEI");
+        Serial.println(c->condicoes.millis);
+        delay(c->condicoes.millis);
+        c->liga(false);
+        c->id_task = SMT_ID_TASK_EVER_OFF;
+        Serial.println("DESLIGUEI");
+        c->stop();
+
     }
 
     static void refri(void *pTASK) {
@@ -197,11 +211,16 @@ public:
             case SMT_ID_TASK_TEMPERATURA_MAIOR:
                 snprintf(bf, size, "%s -> refrigera mantem T > %f", this->name, this->condicoes.min);
                 break;
+            case SMT_ID_ON_FOR:
+                snprintf(bf, size, "%s -> ligado por %f ms", this->name, this->condicoes.millis);
+                break;
+
         }
     }
 
 
 };
+
 class {
 public:
     void answer(Comunicacao *comunicacao, int plug_id, int REQUEST, const char *msg1 = "", const char *msg2 = "") {
@@ -228,7 +247,7 @@ public:
                 break;
             case SMT_REQUEST_GET_ALL:
                 snprintf(msg, 499, " Temperatura:%f\nHumidade: %f\nTOMADA atualmente: %s\n",
-                         Sensor.getHumidy(),Sensor.getHumidy(),this->plug[plug_id].ligado()?"ligado":"desligado");
+                         Sensor.getHumidy(), Sensor.getHumidy(), this->plug[plug_id].ligado() ? "ligado" : "desligado");
                 break;
         }
         comunicacao->sendMensage(msg);
@@ -254,7 +273,7 @@ public:
                 break;
             case SMT_ID_TASK_EVER_OFF:
                 SMT_PRINTLN("modo off ")
-                this->plug[plug_id].id_task = SMT_ID_TASK_EVER_ON;
+                this->plug[plug_id].id_task = SMT_ID_TASK_EVER_OFF;
                 this->plug[plug_id].liga(false);
                 break;
             case SMT_ID_TASK_ALARM:
@@ -264,21 +283,33 @@ public:
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_TEMPERATURA_MAIOR:
-                SMT_PRINTLN("ativando alarme")
+                SMT_PRINTLN("ativando refrigera")
                 this->plug[plug_id].id_task = SMT_ID_TASK_TEMPERATURA_MAIOR;
                 this->plug[plug_id].myThread = Thread(PLUG::refri, "PLUG refrigera", 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_TEMPERATURA_MENOR:
-                SMT_PRINTLN("ativando alarme")
+                SMT_PRINTLN("ativando aquece")
                 this->plug[plug_id].id_task = SMT_ID_TASK_TEMPERATURA_MENOR;
                 this->plug[plug_id].myThread = Thread(PLUG::aquece, "PLUG refrigera", 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_HUMIDADE_ENTRE:
-                SMT_PRINTLN("ativando alarme")
+                SMT_PRINTLN("ativando por humidade entre")
                 this->plug[plug_id].id_task = SMT_ID_TASK_HUMIDADE_ENTRE;
                 this->plug[plug_id].myThread = Thread(PLUG::entre, "PLUG humidity", 2048);
+                this->plug[plug_id].start();
+                break;
+            case SMT_ID_ON_FOR:
+                SMT_PRINTLN("ativando ligado por")
+                if (condicoes.millis<=0){
+                    SMT_PRINTLN("parametro invalido voltando para ever off")
+                    this->plug[plug_id].id_task = SMT_ID_TASK_EVER_OFF;
+                    this->plug[plug_id].liga(false);
+                    break;
+                }
+                this->plug[plug_id].id_task = SMT_ID_ON_FOR;
+                this->plug[plug_id].myThread = Thread(PLUG::on_for, "PLUG on for", 2048);
                 this->plug[plug_id].start();
                 break;
         }
@@ -296,7 +327,6 @@ public:
 
 
 } SMT;
-
 
 
 #endif //CPP_SMT_TAREFAS_H

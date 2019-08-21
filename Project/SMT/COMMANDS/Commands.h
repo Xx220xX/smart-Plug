@@ -82,6 +82,8 @@ GLOBAL_ void received_mensagem(Comunicacao *self, char *msg) {
         SMT.set_task(SMT_ID_TASK_TEMPERATURA_MENOR,id,condicoes);
     }else if (loadCommand(msg, "humidade entre ", "d f f",&id,&condicoes.min,&condicoes.max)) {
         SMT.set_task(SMT_ID_TASK_HUMIDADE_ENTRE,id,condicoes);
+    }else if(loadCommand(msg,"on for","d d",&id,&condicoes.millis)){
+        SMT.set_task(SMT_ID_ON_FOR,id,condicoes);
     }
 
 
