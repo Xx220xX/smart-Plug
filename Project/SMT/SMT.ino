@@ -1,6 +1,7 @@
 #define SMT_DEBUG_TASK
 #define SMT_DEBUG_COMANDS
-#define SMT_BLUETOOTH_DISABLE
+//#define SMT_BLUETOOTH_DISABLE
+#define SMT_WIFI_DISABLE
 
 // dependencias
 //Adafruit_Sensor.h https://github.com/adafruit/Adafruit_Sensor
@@ -26,7 +27,10 @@ void setup() {
                           "123456789",
                           "iot.eclipse.org",
                           1883);
+#ifndef SMT_WIFI_DISABLE
     smt_cl_wifi.atualizarHora();
+#endif
+
     Thread::getCurrent().stop();
 }
 

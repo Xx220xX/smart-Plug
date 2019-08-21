@@ -40,7 +40,6 @@
 #define SMT_PRINT(msg) Serial.print(msg);
 #define SMT_PRINTLN(msg) Serial.println(msg);
 
-bool loadCommand(char *msg, const char string[8], const char string1[2], int *pInt);
 
 #endif
 
