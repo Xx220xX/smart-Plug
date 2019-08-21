@@ -88,13 +88,11 @@ public:
     static void on_for(void *pTASK) {
         PLUG *c = (PLUG *) pTASK;
         c->liga(true);
-        Serial.println("LIGUEI");
         Serial.println(c->condicoes.millis);
         delay(c->condicoes.millis);
         c->liga(false);
         c->id_task = SMT_ID_TASK_EVER_OFF;
-        Serial.println("DESLIGUEI");
-        c->stop();
+
 
     }
 
