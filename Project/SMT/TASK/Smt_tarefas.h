@@ -264,7 +264,7 @@ public:
         switch (TASK_ID) {
             case SMT_ID_TASK_BLINK:
                 this->plug[plug_id].id_task = SMT_ID_TASK_BLINK;
-                this->plug[plug_id].myThread = Thread(PLUG::blink, "PLUG BLINK", 2048);
+                this->plug[plug_id].myThread = Thread( "PLUG BLINK",PLUG::blink, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_EVER_ON:
@@ -279,25 +279,25 @@ public:
             case SMT_ID_TASK_ALARM:
                 SMT_PRINTLN("ativando alarme")
                 this->plug[plug_id].id_task = SMT_ID_TASK_ALARM;
-                this->plug[plug_id].myThread = Thread(PLUG::periodo, "PLUG ALARM", 2048);
+                this->plug[plug_id].myThread = Thread("PLUG ALARM",PLUG::periodo, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_TEMPERATURA_MAIOR:
                 SMT_PRINTLN("ativando refrigera")
                 this->plug[plug_id].id_task = SMT_ID_TASK_TEMPERATURA_MAIOR;
-                this->plug[plug_id].myThread = Thread(PLUG::refri, "PLUG refrigera", 2048);
+                this->plug[plug_id].myThread = Thread( "PLUG refrigera",PLUG::refri, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_TEMPERATURA_MENOR:
                 SMT_PRINTLN("ativando aquece")
                 this->plug[plug_id].id_task = SMT_ID_TASK_TEMPERATURA_MENOR;
-                this->plug[plug_id].myThread = Thread(PLUG::aquece, "PLUG refrigera", 2048);
+                this->plug[plug_id].myThread = Thread( "PLUG refrigera",PLUG::aquece, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_HUMIDADE_ENTRE:
                 SMT_PRINTLN("ativando por humidade entre")
                 this->plug[plug_id].id_task = SMT_ID_TASK_HUMIDADE_ENTRE;
-                this->plug[plug_id].myThread = Thread(PLUG::entre, "PLUG humidity", 2048);
+                this->plug[plug_id].myThread = Thread("PLUG humidity",PLUG::entre,  2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_ON_FOR:
@@ -309,7 +309,7 @@ public:
                     break;
                 }
                 this->plug[plug_id].id_task = SMT_ID_ON_FOR;
-                this->plug[plug_id].myThread = Thread(PLUG::on_for, "PLUG on for", 2048);
+                this->plug[plug_id].myThread = Thread( "PLUG on for",PLUG::on_for, 2048);
                 this->plug[plug_id].start();
                 break;
         }

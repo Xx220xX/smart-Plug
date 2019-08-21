@@ -39,7 +39,7 @@ public:
 
     void init(int veloc) override {
         this->veloc = veloc;
-        myThread = Thread(serial_loop, "SERIAL THREAD");
+        myThread = Thread("SERIAL THREAD",serial_loop);
     }
 
     MEU_SERIAL() {

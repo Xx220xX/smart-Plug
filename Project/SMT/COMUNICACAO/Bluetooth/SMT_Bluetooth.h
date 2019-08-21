@@ -30,7 +30,7 @@ class MEU_BlUETOOTH : public Comunicacao {
 
 public:
     void init(char *_name) override {
-        myThread = Thread(MEU_BlUETOOTH::bluetooth_loop, "BLUETOOTH THREAD");
+        myThread = Thread( "BLUETOOTH THREAD",MEU_BlUETOOTH::bluetooth_loop);
         strcpy(name, _name);
     }
     void setName(char *name_) {

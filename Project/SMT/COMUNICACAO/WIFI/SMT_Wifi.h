@@ -98,7 +98,7 @@ public:
     }
 
     void init(char *_name, char *_pass, char *_mqtt_server = nullptr, int port = 0) override {
-        myThread = Thread(MEU_WIFI::wifi_loop, "WIFI THREAD");
+        myThread = Thread( "WIFI THREAD",MEU_WIFI::wifi_loop);
         strcpy(this->name, _name);
         strcpy(this->pass, _pass);
         if (_mqtt_server) {
