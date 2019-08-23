@@ -26,11 +26,15 @@ void setup() {
                           "123456789",
                           "iot.eclipse.org",
                           1883);
+                          
 #ifndef SMT_WIFI_DISABLE
     smt_cl_wifi.atualizarHora();
 #endif
-
+    #ifndef SMT_SERIAL_DISABLE
+    Serial.println("estou pronto");
+    #endif
     Thread::getCurrent().stop();
+    
 }
 
 void loop() {

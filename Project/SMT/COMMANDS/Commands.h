@@ -43,11 +43,25 @@
 
 #endif
 
+Thread show;
+void fshow(void *p){
+    Condicoes c = *((Condicoes*)p);
+    for(;;) {
+        if (c.hora) {
+            Serial.println(Sensor.getTemperature());
+        }
+        if(c.minuto)
+            Serial.println(Sensor.getHumidy());
+        if(c.segundo)
+            Serial.println(time_tostr());
+        delay(c.millis);
+    }
+}
 
 GLOBAL_ void received_mensagem(Comunicacao *self, char *msg) {
     SMT_PRINTLN("recebi mensagem: ");
     int id = 0;
-    Condicoes condicoes;
+    Condicoes condicoes={0};
     if (loadCommand(msg, "get time", "d", &id)) {
         SMT_PRINTLN("solicitou get time")
         SMT.answer(self, id, SMT_REQUEST_GET_TIME);
@@ -84,6 +98,18 @@ GLOBAL_ void received_mensagem(Comunicacao *self, char *msg) {
         SMT.set_task(SMT_ID_TASK_HUMIDADE_ENTRE,id,condicoes);
     }else if(loadCommand(msg,"on for","d d",&id,&condicoes.millis)){
         SMT.set_task(SMT_ID_ON_FOR,id,condicoes);
+    }
+
+    else if(loadCommand(msg,"info","d d d d",&condicoes.millis,&condicoes.hora,&condicoes.minuto,&condicoes.segundo)){
+        show.stop();
+        show = Thread();
+        if(condicoes.millis==0){
+            Serial.println("parando info");
+        }else{
+            Serial.println("iniciando info");
+            show = Thread("show",fshow,4000);
+            show.start(&condicoes);
+        }
     }
 
 

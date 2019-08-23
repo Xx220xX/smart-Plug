@@ -219,6 +219,7 @@ public:
 
 };
 
+
 class {
 public:
     void answer(Comunicacao *comunicacao, int plug_id, int REQUEST, const char *msg1 = "", const char *msg2 = "") {
@@ -245,7 +246,7 @@ public:
                 break;
             case SMT_REQUEST_GET_ALL:
                 snprintf(msg, 499, " Temperatura:%f\nHumidade: %f\nTOMADA atualmente: %s\n",
-                         Sensor.getHumidy(), Sensor.getHumidy(), this->plug[plug_id].ligado() ? "ligado" : "desligado");
+                         Sensor.getTemperature(), Sensor.getHumidy(), this->plug[plug_id].ligado() ? "ligado" : "desligado");
                 break;
         }
         comunicacao->sendMensage(msg);

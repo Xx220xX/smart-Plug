@@ -5,18 +5,27 @@
 
 class{
     DHT dht;
+    bool usando = false;
 public:
+
     void init(uint8_t pin,uint8_t type = 22){
          dht = DHT (pin,type);
-
     }
 
     float getTemperature(){
-        return dht.readTemperature();
+        while(usando) delay(1);
+        usando = true;
+        float temp = dht.readTemperature();
+        usando = false;
+        return temp;
     }
     float getHumidy(){
-        return dht.readHumidity();
-    }
+        while(usando) delay(1);
+        usando = true;
+        float temp = dht.readHumidity();
+        usando = false;
+        return temp;
+        }
 }Sensor;
 
 
