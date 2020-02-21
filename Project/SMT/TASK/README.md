@@ -10,8 +10,7 @@
  | inf all | @deprecated retorna humidade, hora  e tomada está ligado ou deslida | tomada(int)  | - | - |  - | - |  - | não |
  |  info process   | retorna informacoes da tarefa sendo realizada pela tomada | -  | - | - | - | - | - | não |  
  |  get humidity   | retorna a humida lida pelo sensor | -  | - | - | - | - | - | não |  
- |  get temperature   | retorna a temperatura lida pelo sensor | -  | - | - | - | - | - | não |  
- |  -   | -  | - | - | - | - | - | - | - |  
+ |  get temperature   | retorna a temperatura lida pelo sensor | -  | - | - | - | - | - | não |    
  |  blink   | alterna entre ligado e desligado no periodo de 2 vezes o tempo passado | tomada(int)  | milissegundos(int) | - | - | - | - | sim |  
  |  off   | desliga a tomada | tomada(int)  | - | - | - | - | - | não |  
  |  on   | liga a tomada | tomada(int)  | - | - | - | - | - | não |  
