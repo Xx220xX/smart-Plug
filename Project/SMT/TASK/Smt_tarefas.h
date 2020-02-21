@@ -137,13 +137,16 @@ public:
             delay(1000);
         }
     }
-
+/**
+ * @param wek vetor de 8 posicoes [12345670]
+ *      os numeros correspondem a domingo,segunda,terça,quarta,quinta,sexta nao importa a ordem.
+ */
     static void periodo(void *pTASK) {
         PLUG *c = (PLUG *) pTASK;
-        // condicoes.wek == '12345670
+        // condicoes.wek == '12345670'
         //arrumar dias da semana
         int i;
-        for (i = 0; c->condicoes.wek[i]; i++) {
+        for (i = 0; i<7 && c->condicoes.wek[i]; i++) {
             if (c->condicoes.wek[i] > '0' && c->condicoes.wek[i] <= '7') {
                 c->condicoes.wek[i] = c->condicoes.wek[i] - '0' - 1;
             } else {
@@ -212,7 +215,6 @@ public:
             case SMT_ID_ON_FOR:
                 snprintf(bf, size, "%s -> ligado por %f ms", this->name, this->condicoes.millis);
                 break;
-
         }
     }
 
@@ -244,6 +246,8 @@ public:
             case SMT_REQUEST_GET_TEMPERATURE:
                 snprintf(msg, 499, " %f ", Sensor.getTemperature());
                 break;
+
+            /**@deprecated funcao sem sentido*/
             case SMT_REQUEST_GET_ALL:
                 snprintf(msg, 499, " Temperatura:%f\nHumidade: %f\nTOMADA atualmente: %s\n",
                          Sensor.getTemperature(), Sensor.getHumidy(), this->plug[plug_id].ligado() ? "ligado" : "desligado");
@@ -255,7 +259,7 @@ public:
 
     bool set_task(int TASK_ID, int plug_id, Condicoes condicoes) {
         if (plug_id < 0 || plug_id >= this->all_plugs) {
-            Serial.println("falha id desconhecido");
+           // Serial.println("falha id desconhecido");
             return true;
         }
         this->plug[plug_id].setCondicoes(condicoes);
@@ -271,36 +275,30 @@ public:
                 this->plug[plug_id].liga(true);
                 break;
             case SMT_ID_TASK_EVER_OFF:
-                SMT_PRINTLN("modo off ")
                 this->plug[plug_id].id_task = SMT_ID_TASK_EVER_OFF;
                 this->plug[plug_id].liga(false);
                 break;
             case SMT_ID_TASK_ALARM:
-                SMT_PRINTLN("ativando alarme")
                 this->plug[plug_id].id_task = SMT_ID_TASK_ALARM;
                 this->plug[plug_id].myThread = Thread("PLUG ALARM",PLUG::periodo, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_TEMPERATURA_MAIOR:
-                SMT_PRINTLN("ativando refrigera")
                 this->plug[plug_id].id_task = SMT_ID_TASK_TEMPERATURA_MAIOR;
                 this->plug[plug_id].myThread = Thread( "PLUG refrigera",PLUG::refri, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_TEMPERATURA_MENOR:
-                SMT_PRINTLN("ativando aquece")
                 this->plug[plug_id].id_task = SMT_ID_TASK_TEMPERATURA_MENOR;
-                this->plug[plug_id].myThread = Thread( "PLUG refrigera",PLUG::aquece, 2048);
+                this->plug[plug_id].myThread = Thread( "PLUG aquece",PLUG::aquece, 2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_TASK_HUMIDADE_ENTRE:
-                SMT_PRINTLN("ativando por humidade entre")
                 this->plug[plug_id].id_task = SMT_ID_TASK_HUMIDADE_ENTRE;
                 this->plug[plug_id].myThread = Thread("PLUG humidity",PLUG::entre,  2048);
                 this->plug[plug_id].start();
                 break;
             case SMT_ID_ON_FOR:
-                SMT_PRINTLN("ativando ligado por")
                 if (condicoes.millis<=0){
                     SMT_PRINTLN("parametro invalido voltando para ever off")
                     this->plug[plug_id].id_task = SMT_ID_TASK_EVER_OFF;

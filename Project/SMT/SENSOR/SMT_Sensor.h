@@ -13,14 +13,14 @@ public:
     }
 
     float getTemperature(){
-        while(usando) delay(1);
+        while(usando) delay(10);
         usando = true;
         float temp = dht.readTemperature();
         usando = false;
         return temp;
     }
     float getHumidy(){
-        while(usando) delay(1);
+        while(usando) delay(10);
         usando = true;
         float temp = dht.readHumidity();
         usando = false;

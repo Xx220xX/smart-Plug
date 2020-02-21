@@ -16,7 +16,7 @@
 #include "COMMANDS/Commands.h"
 
 
-// para atulizar a hora chamar smt_cl_wifi.atualizarHora();
+// para atualizar a hora chamar smt_cl_wifi.atualizarHora();
 void setup() {
     Sensor.init(4, 22);
     SMT.addPlug(PLUG("teste", 2));//por ordem de insercao
@@ -26,15 +26,15 @@ void setup() {
                           "123456789",
                           "iot.eclipse.org",
                           1883);
-                          
+
 #ifndef SMT_WIFI_DISABLE
     smt_cl_wifi.atualizarHora();
 #endif
-    #ifndef SMT_SERIAL_DISABLE
+#ifndef SMT_SERIAL_DISABLE
     Serial.println("estou pronto");
-    #endif
+#endif
     Thread::getCurrent().stop();
-    
+
 }
 
 void loop() {
